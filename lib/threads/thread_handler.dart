@@ -5,6 +5,8 @@ import 'dart:isolate';
 // import 'package:flutter/cupertino.dart';
 // import 'package:flutter/material.dart';
 
+/// Wrapper to create a managed [Isolate] with bidirectional communication.
+///
 class ThreadHandler {
   late Isolate _threadHandle;
   Map<Capability, Completer> tasks = <Capability, Completer>{};
@@ -18,8 +20,8 @@ class ThreadHandler {
     return _threadHandle;
   }
 
-  ThreadHandler(ThreadFunction threadProc) {
-    var f = Isolate.spawn<SendPort>(threadProc, port.sendPort());
+  ThreadHandler(ThreadFunction threadFunc) {
+    var f = Isolate.spawn<SendPort>(threadFunc, port.sendPort());
     f.then((value) => _threadHandle = value);
     listener(port);
   }
@@ -77,6 +79,10 @@ class TxPort {
   }
 }
 
+/// Determines if a [JobType] returns a value or not.
+enum _RetType { val, none }
+
+/// The JobType class is the primary
 class JobType<T, E> {
   // Int should be set by an enum determined by
   // the code that sets ThreadProc and ListenerProc
@@ -87,21 +93,6 @@ class JobType<T, E> {
   _RetType retType = _RetType.val;
 
   JobType(this.selector, {this.input});
-}
-
-enum _RetType { val, none }
-
-void exampleThreadProc2(SendPort p) async {
-  ThreadProc proc = ThreadProc(p, <Function>[
-    (JobType data) {
-      print("print from func1!");
-    },
-    (JobType data) {
-      if (JobType is JobType<int, int>) {
-        data.result = data.input! * 2;
-      }
-    },
-  ]);
 }
 
 class ThreadProc {
@@ -126,6 +117,21 @@ class ThreadProc {
       }
     }
   }
+}
+
+/// Example [Isolate] function that employs ThreadProc
+/// to simplify the creation of ThreadHandlers.
+void exampleThreadProc(SendPort p) async {
+  ThreadProc proc = ThreadProc(p, <Function>[
+    (JobType data) {
+      print("print from func1!");
+    },
+    (JobType data) {
+      if (JobType is JobType<int, int>) {
+        data.result = data.input! * 2;
+      }
+    },
+  ]);
 }
 
 /*
