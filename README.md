@@ -1,14 +1,8 @@
-# spark_lib
+# Spark Lib - Flutter
 
-A new Flutter package project.
+This is a personal utility library for use with my Flutter projects. It is haphazard at best, but has some useful shared functions.
 
-## Getting Started
+## Copyright
+This repository and original code belongs to PhotonRayleigh. Only those who I grant express permission may directly edit this repository. You may, however, make a copy of the code in this repository and use it how you see fit.
 
-This project is a starting point for a Dart
-[package](https://flutter.dev/developing-packages/),
-a library module containing code that can be shared easily across
-multiple Flutter or Dart projects.
-
-For help getting started with Flutter, view our 
-[online documentation](https://flutter.dev/docs), which offers tutorials, 
-samples, guidance on mobile development, and a full API reference.
+Flutter and the other third party libraries/technologies used in this repository are governed by their own respective licenses. Refer to their respective documentation for details.
