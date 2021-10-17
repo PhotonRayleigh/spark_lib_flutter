@@ -25,8 +25,12 @@ class AppNavigator {
 
   static BackModel backModel = BackModel.toHome;
 
+  static bool _initialized = false;
+
   static initialize(
       {required Widget home, BackModel backModel = BackModel.toHome}) {
+    // Prevent double initialization on hot reload or by error.
+    if (_initialized) return;
     // Setup home and screen stack
     AppNavigator.homeScreen = home;
     screenStack.add(AppNavigator.homeScreen);
@@ -50,6 +54,7 @@ class AppNavigator {
 
     // WARNING: This will break backing out of popups.
     // BackButtonInterceptor.add(navigationOverride);
+    _initialized = true;
   }
 
   static NavigationFunc navigateTo = _toHomeNavigateTo;
