@@ -8,6 +8,9 @@ class TypedList extends Iterable {
     return _list.length;
   }
 
+  bool get isEmpty => _list.isEmpty;
+  bool get isNotEmpty => _list.isNotEmpty;
+
   Iterator get iterator {
     return _TypedListIterator(this);
   }
@@ -27,7 +30,7 @@ class TypedList extends Iterable {
   }
 
   operator []=(int index, dynamic value) {
-    _list[index] = value;
+    _list[index].value = value;
   }
 
   Type type(int index) {
@@ -60,18 +63,18 @@ class TypedList extends Iterable {
 }
 
 class _TypedListIterator extends Iterator {
-  int index = 0;
+  int index = -1;
   TypedList owner;
 
   _TypedListIterator(this.owner);
 
   bool moveNext() {
-    var temp = index + 1;
-    if (temp >= owner.length) {
-      return false;
-    } else {
-      index = temp;
+    if (owner.isEmpty) return false;
+    if ((index + 1) < owner.length) {
+      index++;
       return true;
+    } else {
+      return false;
     }
   }
 

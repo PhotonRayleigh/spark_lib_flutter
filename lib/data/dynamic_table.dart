@@ -18,6 +18,14 @@ class Column<T> {
   int position;
 
   Column(this.name, this.defaultValue, {this.position = 0});
+
+  Cell<T?> makeCell({T? value}) {
+    if (value == null) {
+      return Cell<T?>(defaultValue);
+    } else {
+      return Cell<T?>(value);
+    }
+  }
 }
 
 class Row {
@@ -31,11 +39,11 @@ class Row {
   }
 
   dynamic operator [](int index) {
-    return cells[index].value;
+    return cells[index];
   }
 
   operator []=(int index, dynamic value) {
-    cells[index].value = value;
+    cells[index] = value;
   }
 }
 
@@ -161,9 +169,10 @@ class DynamicTable {
       newRow = Row(
           cells: TypedList(
               list: List.generate(
-                  columns.length, (index) => columns[index].defaultValue)));
+                  columns.length, (index) => columns[index].makeCell())));
     }
     newRow.position = rows.length - 1;
+    rows.add(newRow);
     return newRow;
   }
 
