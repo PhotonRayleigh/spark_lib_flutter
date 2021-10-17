@@ -1,17 +1,25 @@
 import 'cell.dart';
 export 'cell.dart';
 
-class TypedList {
+class TypedList extends Iterable {
   List<Cell> _list = <Cell>[];
 
   int get length {
     return _list.length;
   }
 
+  Iterator get iterator {
+    return _TypedListIterator(this);
+  }
+
   TypedList({List<Cell>? list}) {
     if (list != null) {
       _list = list;
     }
+  }
+
+  TypedList.from(TypedList list) {
+    _list = list._list;
   }
 
   dynamic operator [](int index) {
@@ -48,5 +56,26 @@ class TypedList {
 
   Cell<dynamic> removeAt(int index) {
     return _list.removeAt(index);
+  }
+}
+
+class _TypedListIterator extends Iterator {
+  int index = 0;
+  TypedList owner;
+
+  _TypedListIterator(this.owner);
+
+  bool moveNext() {
+    var temp = index + 1;
+    if (temp >= owner.length) {
+      return false;
+    } else {
+      index = temp;
+      return true;
+    }
+  }
+
+  dynamic get current {
+    return owner[index];
   }
 }

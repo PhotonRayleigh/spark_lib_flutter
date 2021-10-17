@@ -1,21 +1,23 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 
 import '../collections/typed_list.dart';
+export '../collections/typed_list.dart';
 
-class TableCell<T> extends Cell<T> {
+// Considering used
+class _TableCell<T> extends Cell<T> {
   Column<T>? column;
   Row? row;
 
-  TableCell(T value, {this.column, this.row}) : super(value);
+  _TableCell(T value, {this.column, this.row}) : super(value);
 }
 
 class Column<T> {
   Type type = T;
+  String name = "";
   T? defaultValue;
   int position;
-  List<Cell<T>> cells = <Cell<T>>[];
 
-  Column(this.defaultValue, {this.position = 0});
+  Column(this.name, this.defaultValue, {this.position = 0});
 }
 
 class Row {
@@ -26,6 +28,14 @@ class Row {
     if (cells != null) {
       this.cells = cells;
     }
+  }
+
+  dynamic operator [](int index) {
+    return cells[index].value;
+  }
+
+  operator []=(int index, dynamic value) {
+    cells[index].value = value;
   }
 }
 
@@ -54,12 +64,26 @@ class DynamicTable {
     }
   }
 
+  DynamicTable.from(DynamicTable table) {
+    columns = List.from(table.columns);
+    rows = List.from(table.rows);
+  }
+
   void setColumns(List<Column> columns) {
     if (rows.isNotEmpty)
       throw ErrorDescription(
           "Error: cannot set columns in a table populated with rows");
     this.columns = columns;
     _numberColumns();
+  }
+
+  List<T> getColumnData<T>(int index) {
+    List<T> data = <T>[];
+    for (var row in rows) {
+      data.add(row.cells[index]);
+    }
+
+    return data;
   }
 
   void setRows(List<Row> newRows) {
@@ -178,6 +202,14 @@ class DynamicTable {
     }
     rows.insertAll(index, newRows);
     _numberRows();
+  }
+
+  void removeRow(Row row) {
+    rows.remove(row);
+  }
+
+  void removeRowAt(int index) {
+    rows.removeAt(index);
   }
 
   bool _matchColumns(Row row) {
