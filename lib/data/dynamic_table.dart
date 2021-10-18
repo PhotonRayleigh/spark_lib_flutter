@@ -19,7 +19,7 @@ class DtColumn<T> {
 
   DtColumn(this.name, this.defaultValue, {this.position = 0});
 
-  Box<T?> makeCell({T? value}) {
+  Box<T?> makeCell([T? value]) {
     if (value == null) {
       return Box<T?>(defaultValue);
     } else {
@@ -126,7 +126,7 @@ class DynamicTable {
     columns.add(col);
     col.position = columns.length - 1;
     for (var row in rows) {
-      row.cells.add(Box<T?>(col.defaultValue));
+      row.cells.add(col.makeCell());
     }
   }
 
@@ -153,11 +153,11 @@ class DynamicTable {
     columns.insert(index, col);
     _numberColumns();
     for (var row in rows) {
-      row.cells.insert(index, Box<T?>(col.defaultValue));
+      row.cells.insert(index, col.makeCell());
     }
   }
 
-  DtRow addRow({DtRow? row}) {
+  DtRow addRow([DtRow? row]) {
     DtRow newRow;
     if (row != null) {
       if (_matchColumns(row)) {
@@ -184,7 +184,7 @@ class DynamicTable {
     rows.addAll(newRows);
   }
 
-  void insertRow(int index, {DtRow? row}) {
+  void insertRow(int index, [DtRow? row]) {
     DtRow newRow;
     if (row != null) {
       if (_matchColumns(row)) {

@@ -62,16 +62,16 @@ class BoxList extends Iterable {
     return _list[index];
   }
 
-  void replace(int index, Box value) {
-    _list[index] = value;
+  void replace(int index, Box newBox) {
+    _list[index] = newBox;
   }
 
-  void add(Box newCell) {
-    _list.add(newCell);
+  void add(Box newBox) {
+    _list.add(newBox);
   }
 
-  void insert(int index, Box newCell) {
-    _list.insert(index, newCell);
+  void insert(int index, Box newBox) {
+    _list.insert(index, newBox);
   }
 
   bool remove(Box value) {
