@@ -1,6 +1,6 @@
 import 'dart:io';
 
-void print_env_vars() {
+void printEnvVars() {
   var env = Platform.environment;
   print("Printing env vars:");
   env.forEach((key, value) {

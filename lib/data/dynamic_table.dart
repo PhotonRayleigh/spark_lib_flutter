@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
 
-import '../collections/typed_list.dart';
-export '../collections/typed_list.dart';
+import '../collections/boxlist.dart';
+export '../collections/boxlist.dart';
 
 // Considering used
-class _TableCell<T> extends Cell<T> {
+class _TableCell<T> extends Box<T> {
   Column<T>? column;
   Row? row;
 
@@ -19,20 +19,20 @@ class Column<T> {
 
   Column(this.name, this.defaultValue, {this.position = 0});
 
-  Cell<T?> makeCell({T? value}) {
+  Box<T?> makeCell({T? value}) {
     if (value == null) {
-      return Cell<T?>(defaultValue);
+      return Box<T?>(defaultValue);
     } else {
-      return Cell<T?>(value);
+      return Box<T?>(value);
     }
   }
 }
 
 class Row {
   int position = 0;
-  TypedList cells = TypedList();
+  BoxList cells = BoxList();
 
-  Row({TypedList? cells, this.position = 0}) {
+  Row({BoxList? cells, this.position = 0}) {
     if (cells != null) {
       this.cells = cells;
     }
@@ -126,7 +126,7 @@ class DynamicTable {
     columns.add(col);
     col.position = columns.length - 1;
     for (var row in rows) {
-      row.cells.add(Cell<T?>(col.defaultValue));
+      row.cells.add(Box<T?>(col.defaultValue));
     }
   }
 
@@ -153,7 +153,7 @@ class DynamicTable {
     columns.insert(index, col);
     _numberColumns();
     for (var row in rows) {
-      row.cells.insert(index, Cell<T?>(col.defaultValue));
+      row.cells.insert(index, Box<T?>(col.defaultValue));
     }
   }
 
@@ -167,9 +167,8 @@ class DynamicTable {
       }
     } else {
       newRow = Row(
-          cells: TypedList(
-              list: List.generate(
-                  columns.length, (index) => columns[index].makeCell())));
+          cells: BoxList(List.generate(
+              columns.length, (index) => columns[index].makeCell())));
     }
     newRow.position = rows.length - 1;
     rows.add(newRow);
@@ -196,9 +195,8 @@ class DynamicTable {
       }
     } else {
       newRow = Row(
-          cells: TypedList(
-              list: List.generate(
-                  columns.length, (index) => columns[index].defaultValue)));
+          cells: BoxList(List.generate(
+              columns.length, (index) => columns[index].defaultValue)));
     }
     newRow.position = index;
     rows.insert(index, newRow);
