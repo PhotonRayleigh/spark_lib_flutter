@@ -55,7 +55,7 @@ class BoxList extends Iterable {
   void setAs<T>(int index, T value) => _list[index].setAs<T>(value);
 
   Type type(int index) {
-    return _list[index].type;
+    return _list[index].type!;
   }
 
   Box<dynamic> cell(int index) {

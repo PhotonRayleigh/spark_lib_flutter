@@ -1,21 +1,30 @@
 import 'package:flutter/foundation.dart';
 
-import '../collections/rdynamic.dart';
+import '../collections/boxlist.dart';
+export '../collections/boxlist.dart';
 
-class DtColumn<T> {
+class BoxColumn<T> {
   Type type = T;
   String name = "";
   T? defaultValue;
   int position;
 
-  DtColumn(this.name, this.defaultValue, {this.position = 0});
+  BoxColumn(this.name, this.defaultValue, {this.position = 0});
+
+  Box<T?> makeCell([T? value]) {
+    if (value == null) {
+      return Box<T?>(defaultValue);
+    } else {
+      return Box<T?>(value);
+    }
+  }
 }
 
-class DtRow {
+class BoxRow {
   int position = 0;
-  List<dynamic> cells = [];
+  BoxList cells = BoxList();
 
-  DtRow([List<dynamic>? cells, this.position = 0]) {
+  BoxRow([BoxList? cells, this.position = 0]) {
     if (cells != null) {
       this.cells = cells;
     }
@@ -30,7 +39,7 @@ class DtRow {
   }
 }
 
-class DynamicTable {
+class BoxTable {
   /* 
     Note on position versus ID's:
       position is the internal location of a row or column in memory.
@@ -44,23 +53,23 @@ class DynamicTable {
       I will want to eventually add ways to get sorted data. Maybe view tables
       would be appropriate. Will have to experiment.
   */
-  List<DtColumn> columns = <DtColumn>[];
-  List<DtRow> rows = <DtRow>[];
+  List<BoxColumn> columns = <BoxColumn>[];
+  List<BoxRow> rows = <BoxRow>[];
   static const String _columnMismatchErrorMsg =
       "Error: new row's cells do not match table's column definitions";
 
-  DynamicTable({List<DtColumn>? columns}) {
+  BoxTable({List<BoxColumn>? columns}) {
     if (columns != null) {
       setColumns(columns);
     }
   }
 
-  DynamicTable.from(DynamicTable table) {
+  BoxTable.from(BoxTable table) {
     columns = List.from(table.columns);
     rows = List.from(table.rows);
   }
 
-  void setColumns(List<DtColumn> columns) {
+  void setColumns(List<BoxColumn> columns) {
     if (rows.isNotEmpty)
       throw ErrorDescription(
           "Error: cannot set columns in a table populated with rows");
@@ -77,7 +86,7 @@ class DynamicTable {
     return data;
   }
 
-  void setRows(List<DtRow> newRows) {
+  void setRows(List<BoxRow> newRows) {
     // WARNING: This operation will DROP ALL ROWS IN A TABLE
     for (var row in newRows) {
       var matched = _matchColumns(row);
@@ -105,15 +114,15 @@ class DynamicTable {
     }
   }
 
-  void addColumn<T>(DtColumn<T> col) {
+  void addColumn<T>(BoxColumn<T> col) {
     columns.add(col);
     col.position = columns.length - 1;
     for (var row in rows) {
-      row.cells.add(col.defaultValue);
+      row.cells.add(col.makeCell());
     }
   }
 
-  DtColumn removeColumn(DtColumn col) {
+  BoxColumn removeColumn(BoxColumn col) {
     int index = col.position;
     for (var row in rows) {
       row.cells.removeAt(index);
@@ -123,7 +132,7 @@ class DynamicTable {
     return result;
   }
 
-  DtColumn removeColumnAt(int index) {
+  BoxColumn removeColumnAt(int index) {
     for (var row in rows) {
       row.cells.removeAt(index);
     }
@@ -132,16 +141,16 @@ class DynamicTable {
     return result;
   }
 
-  void insertColumn<T>(int index, DtColumn<T> col) {
+  void insertColumn<T>(int index, BoxColumn<T> col) {
     columns.insert(index, col);
     _numberColumns();
     for (var row in rows) {
-      row.cells.insert(index, col.defaultValue);
+      row.cells.insert(index, col.makeCell());
     }
   }
 
-  DtRow addRow([DtRow? row]) {
-    DtRow newRow;
+  BoxRow addRow([BoxRow? row]) {
+    BoxRow newRow;
     if (row != null) {
       if (_matchColumns(row)) {
         newRow = row;
@@ -149,15 +158,15 @@ class DynamicTable {
         throw ErrorDescription(_columnMismatchErrorMsg);
       }
     } else {
-      newRow = DtRow(List.generate(
-          columns.length, (index) => columns[index].defaultValue));
+      newRow = BoxRow(BoxList(
+          List.generate(columns.length, (index) => columns[index].makeCell())));
     }
     newRow.position = rows.length - 1;
     rows.add(newRow);
     return newRow;
   }
 
-  void addAllRows(List<DtRow> newRows) {
+  void addAllRows(List<BoxRow> newRows) {
     int rowNumber = rows.length;
     for (var row in newRows) {
       if (!_matchColumns(row)) throw ErrorDescription(_columnMismatchErrorMsg);
@@ -167,8 +176,8 @@ class DynamicTable {
     rows.addAll(newRows);
   }
 
-  void insertRow(int index, [DtRow? row]) {
-    DtRow newRow;
+  void insertRow(int index, [BoxRow? row]) {
+    BoxRow newRow;
     if (row != null) {
       if (_matchColumns(row)) {
         newRow = row;
@@ -176,15 +185,15 @@ class DynamicTable {
         throw ErrorDescription(_columnMismatchErrorMsg);
       }
     } else {
-      newRow = DtRow(List.generate(
-          columns.length, (index) => columns[index].defaultValue));
+      newRow = BoxRow(BoxList(List.generate(
+          columns.length, (index) => columns[index].defaultValue)));
     }
     newRow.position = index;
     rows.insert(index, newRow);
     _numberRows();
   }
 
-  void insertAllRows(int index, List<DtRow> newRows) {
+  void insertAllRows(int index, List<BoxRow> newRows) {
     for (var row in newRows) {
       if (!_matchColumns(row)) throw ErrorDescription(_columnMismatchErrorMsg);
     }
@@ -192,7 +201,7 @@ class DynamicTable {
     _numberRows();
   }
 
-  void removeRow(DtRow row) {
+  void removeRow(BoxRow row) {
     rows.remove(row);
   }
 
@@ -200,13 +209,13 @@ class DynamicTable {
     rows.removeAt(index);
   }
 
-  bool _matchColumns(DtRow row) {
+  bool _matchColumns(BoxRow row) {
     bool match = true;
     if (row.cells.length != columns.length) {
       match = false;
     } else {
       for (int i = 0; i < columns.length; i++) {
-        if (row.cells[i].runtimeType != columns[i].type) {
+        if (row.cells.type(i) != columns[i].type) {
           match = false;
           break;
         }
