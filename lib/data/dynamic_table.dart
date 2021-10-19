@@ -13,11 +13,11 @@ class DtColumn<T> {
 
 class DtRow {
   int position = 0;
-  List<dynamic> cells = [];
+  FixedList cells = FixedList();
 
   DtRow([List<dynamic>? cells, this.position = 0]) {
     if (cells != null) {
-      this.cells = cells;
+      this.cells = FixedList(cells);
     }
   }
 
@@ -109,7 +109,7 @@ class DynamicTable {
     columns.add(col);
     col.position = columns.length - 1;
     for (var row in rows) {
-      row.cells.add(col.defaultValue);
+      row.cells.add(fix(col.defaultValue, col.type));
     }
   }
 
@@ -136,7 +136,7 @@ class DynamicTable {
     columns.insert(index, col);
     _numberColumns();
     for (var row in rows) {
-      row.cells.insert(index, col.defaultValue);
+      row.cells.insert(index, fix(col.defaultValue, col.type));
     }
   }
 
