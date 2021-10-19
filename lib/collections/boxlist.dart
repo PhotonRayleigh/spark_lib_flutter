@@ -117,14 +117,3 @@ class _TypedListIterator extends Iterator {
     return owner[index];
   }
 }
-
-BoxList _myList = BoxList([
-  Box<int>(1),
-  Box<int?>(null),
-  Box<String>("nerp"),
-  Box<BoxList>(BoxList()),
-]);
-
-void _testFunc() {
-  var gottenValue = _myList.getAs<String>(2);
-}

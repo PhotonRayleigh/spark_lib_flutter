@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import '../collections/rdynamic.dart';
+export '../collections/rdynamic.dart';
 
 class DtColumn<T> {
   Type type = T;
