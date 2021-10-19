@@ -2,31 +2,15 @@
 // dynamic variables at runtime.
 // I'm unsure if anything I made here is actually helpful or not.
 
-extension ObjExt on Object {
-  /// Returns a Fixed object, which stores a dynamic value
-  /// who's type is enforced at runtime.
-  Fixed fix([Type? type]) {
-    if (this is Fixed) {
-      return this as Fixed;
-    } else if (type == null) {
-      return Fixed.implicit(this);
-    } else {
-      return Fixed(type, this);
-    }
-  }
-
-  /// Returns dynamic by default.
-  /// Provide type parameter to enforce type checking on retrieved value.
-  T safeVal<T>() {
-    if (this is Fixed) {
-      return (this as Fixed).value;
-    } else {
-      return this as T;
-    }
+T safeVal<T>(Object obj) {
+  if (obj is Fixed) {
+    return obj.value;
+  } else {
+    return obj as T;
   }
 }
 
-Fixed fix(dynamic value, [Type? type]) {
+Fixed fix(Object? value, [Type? type]) {
   if (value is Fixed) {
     return value;
   } else if (type == null) {
@@ -54,11 +38,6 @@ void safeAssign<T, E>(T left, E right) {
 }
 
 Fixed nullFixed(Type type) => Fixed.asNull(type);
-void func() {
-  var mything = "123".fix();
-  var newthing = mything.safeVal<String>();
-  safeAssign(mything, newthing);
-}
 
 extension RList on List {
   E getAs<E>(int index) => this[index] as E;
