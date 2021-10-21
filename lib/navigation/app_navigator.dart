@@ -25,6 +25,8 @@ class AppNavigator {
 
   static BackModel backModel = BackModel.toHome;
 
+  static List<Function> preNavCallbacks = <Function>[];
+
   static bool _initialized = false;
 
   static initialize(
@@ -39,10 +41,10 @@ class AppNavigator {
     AppNavigator.backModel = backModel;
     switch (backModel) {
       case (BackModel.toHome):
-        navigateTo = _toHomeNavigateTo;
+        navFunc = _toHomeNavigateTo;
         break;
       case (BackModel.inOut):
-        navigateTo = _inOutNavigateTo;
+        navFunc = _inOutNavigateTo;
         break;
     }
 
@@ -57,7 +59,15 @@ class AppNavigator {
     _initialized = true;
   }
 
-  static NavigationFunc navigateTo = _toHomeNavigateTo;
+  static void navigateTo(Widget screen, {BuildContext? context}) {
+    for (var callback in preNavCallbacks) {
+      callback();
+    }
+    preNavCallbacks.clear();
+    navFunc(screen, context: context);
+  }
+
+  static NavigationFunc navFunc = _toHomeNavigateTo;
 
   static void navigateBack({BuildContext? context}) {
     if (screenStack.length == 1) return;

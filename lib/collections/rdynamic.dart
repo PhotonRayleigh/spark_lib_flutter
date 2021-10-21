@@ -77,7 +77,7 @@ class Fixed {
   dynamic _value;
   dynamic get value => _value;
   set value(dynamic val) {
-    if (val.runtimeType == type)
+    if (val.runtimeType == type || val == null)
       _value = val;
     else
       throw "Error setting RDynamic value: type $type expected, but ${val.runtimeType} was provided.";

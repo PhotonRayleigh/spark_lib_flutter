@@ -50,10 +50,15 @@ class DynamicTable {
   static const String _columnMismatchErrorMsg =
       "Error: new row's cells do not match table's column definitions";
 
-  DynamicTable({List<DtColumn>? columns}) {
+  DynamicTable([List<DtColumn>? columns]) {
     if (columns != null) {
       setColumns(columns);
     }
+  }
+
+  DynamicTable.of(DynamicTable table) {
+    columns = List.of(table.columns);
+    rows = List.of(table.rows);
   }
 
   DynamicTable.from(DynamicTable table) {
@@ -81,9 +86,10 @@ class DynamicTable {
   void setRows(List<DtRow> newRows) {
     // WARNING: This operation will DROP ALL ROWS IN A TABLE
     for (var row in newRows) {
-      var matched = _matchColumns(row);
-      if (!matched) {
-        throw ErrorDescription(_columnMismatchErrorMsg);
+      try {
+        _matchColumns(row);
+      } catch (e) {
+        throw e;
       }
     }
     rows = newRows;
@@ -144,10 +150,11 @@ class DynamicTable {
   DtRow addRow([DtRow? row]) {
     DtRow newRow;
     if (row != null) {
-      if (_matchColumns(row)) {
+      try {
+        _matchColumns(row);
         newRow = row;
-      } else {
-        throw ErrorDescription(_columnMismatchErrorMsg);
+      } catch (e) {
+        throw e;
       }
     } else {
       newRow = DtRow(List.generate(
@@ -161,9 +168,13 @@ class DynamicTable {
   void addAllRows(List<DtRow> newRows) {
     int rowNumber = rows.length;
     for (var row in newRows) {
-      if (!_matchColumns(row)) throw ErrorDescription(_columnMismatchErrorMsg);
-      row.position = rowNumber;
-      rowNumber++;
+      try {
+        _matchColumns(row);
+        row.position = rowNumber;
+        rowNumber++;
+      } catch (e) {
+        throw e;
+      }
     }
     rows.addAll(newRows);
   }
@@ -171,10 +182,12 @@ class DynamicTable {
   void insertRow(int index, [DtRow? row]) {
     DtRow newRow;
     if (row != null) {
-      if (_matchColumns(row)) {
+      try {
+        _matchColumns(row);
         newRow = row;
-      } else {
-        throw ErrorDescription(_columnMismatchErrorMsg);
+      } catch (e) {
+        // print("Columns failed to match: ${e.toString()}");
+        throw e;
       }
     } else {
       newRow = DtRow(List.generate(
@@ -187,7 +200,12 @@ class DynamicTable {
 
   void insertAllRows(int index, List<DtRow> newRows) {
     for (var row in newRows) {
-      if (!_matchColumns(row)) throw ErrorDescription(_columnMismatchErrorMsg);
+      try {
+        _matchColumns(row);
+      } catch (e) {
+        // print("Columns failed to match: ${e.toString()}");
+        throw e;
+      }
     }
     rows.insertAll(index, newRows);
     _numberRows();
@@ -203,14 +221,26 @@ class DynamicTable {
 
   bool _matchColumns(DtRow row) {
     bool match = true;
+    var errorList = <int>[];
     if (row.cells.length != columns.length) {
       match = false;
+      throw "Column/row length mismatch - Expected row length of ${columns.length} but got ${row.cells.length} instead.";
     } else {
       for (int i = 0; i < columns.length; i++) {
-        if (row.cells[i].runtimeType != columns[i].type) {
+        if (row.cells.type(i) != columns[i].type) {
           match = false;
-          break;
+          errorList.add(i);
         }
+      }
+      if (match == false) {
+        String expected = "";
+        String recieved = "";
+        for (int i in errorList) {
+          expected = expected + "[$i : ${columns[i].type}] ";
+          recieved = recieved + "[$i : ${row.cells[i].runtimeType}] ";
+        }
+
+        throw "Column/row type mismatch. Expected $expected, recieved $recieved";
       }
     }
 
