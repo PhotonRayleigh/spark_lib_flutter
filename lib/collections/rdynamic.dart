@@ -4,7 +4,7 @@
 
 T safeVal<T>(Object obj) {
   if (obj is Fixed) {
-    return obj.value;
+    return obj.value as T;
   } else {
     return obj as T;
   }
@@ -14,7 +14,7 @@ Fixed fix(Object? value, [Type? type]) {
   if (value is Fixed) {
     return value;
   } else if (type == null) {
-    return Fixed.implicit(value);
+    return Fixed.implicit(value!);
   } else {
     return Fixed(type, value);
   }
@@ -31,7 +31,7 @@ void safeAssign<T, E>(T left, E right) {
   } else if (left is Fixed && !(right is Fixed)) {
     left.value = right;
   } else if (!(left is Fixed) && (right is Fixed)) {
-    left = right.value;
+    left = right.value as T;
   } else if (E is T) {
     left = right as T;
   }
@@ -74,9 +74,9 @@ class _TypeAccess {
 
 class Fixed {
   late final Type type;
-  dynamic _value;
-  dynamic get value => _value;
-  set value(dynamic val) {
+  Object? _value;
+  Object? get value => _value;
+  set value(Object? val) {
     if (val.runtimeType == type || val == null)
       _value = val;
     else
@@ -91,19 +91,15 @@ class Fixed {
       throw "Error setting RDynamic value: type $type expected, but $E was provided.";
   }
 
-  Fixed(this.type, [dynamic value]) {
+  Fixed(this.type, [Object? value]) {
     this.value = value;
   }
   Fixed.asNull(this.type) {
     makeNull();
   }
-  Fixed.implicit(dynamic value) {
-    if (value == null) {
-      throw "Error: null cannot be used to set type implicitly in RDynamic.";
-    } else {
-      type = value.runtimeType;
-      this.value = value;
-    }
+  Fixed.implicit(Object value) {
+    type = value.runtimeType;
+    this.value = value;
   }
 
   void makeNull() {
@@ -125,7 +121,7 @@ class FixedList extends Iterable {
     return _TypedListIterator(this);
   }
 
-  FixedList([List<dynamic>? list]) {
+  FixedList([List<Object?>? list]) {
     if (list != null) {
       if (list is List<Fixed>)
         _list = list;
@@ -152,13 +148,13 @@ class FixedList extends Iterable {
 
   /// Bracket notation will return the value contained
   /// in the [Fixed] at the index, like a normal [List].
-  dynamic operator [](int index) {
+  Object? operator [](int index) {
     return _list[index].value;
   }
 
   /// Bracket assignment will assign the value directly to
   /// the [Fixed]'s value, like a normal [List].
-  operator []=(int index, dynamic value) {
+  operator []=(int index, Object? value) {
     _list[index].value = value;
   }
 

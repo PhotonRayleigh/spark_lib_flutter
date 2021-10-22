@@ -77,7 +77,7 @@ class DynamicTable {
   List<T> getColumnData<T>(int index) {
     List<T> data = <T>[];
     for (var row in rows) {
-      data.add(row.cells[index]);
+      data.add(row.cells[index] as T);
     }
 
     return data;
