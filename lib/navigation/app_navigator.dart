@@ -59,11 +59,15 @@ class AppNavigator {
     _initialized = true;
   }
 
-  static void navigateTo(Widget screen, {BuildContext? context}) {
+  static void runPreNavCallbacks() {
     for (var callback in preNavCallbacks) {
       callback();
     }
     preNavCallbacks.clear();
+  }
+
+  static void navigateTo(Widget screen, {BuildContext? context}) {
+    runPreNavCallbacks();
     navFunc(screen, context: context);
   }
 
@@ -71,6 +75,7 @@ class AppNavigator {
 
   static void navigateBack({BuildContext? context}) {
     if (screenStack.length == 1) return;
+    runPreNavCallbacks();
     screenStack.removeLast();
     rootNavigator.pushReplacement(MaterialPageRoute(
       builder: (context) {
