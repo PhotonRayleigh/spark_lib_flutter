@@ -1,6 +1,4 @@
 import 'package:flutter/services.dart';
-import 'package:characters/characters.dart';
-import 'package:get/get.dart';
 
 class FormatCurrencyAlphabetic extends TextInputFormatter {
   FormatCurrencyAlphabetic({this.leadingDigits = 16, this.decimalPlaces = 8});

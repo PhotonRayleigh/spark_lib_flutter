@@ -1,6 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:characters/characters.dart';
-import 'package:get/get.dart';
+// import 'package:get/get.dart';
+import 'package:vy_string_utils/vy_string_utils.dart';
 
 class FormatCurrencyNumeric extends TextInputFormatter {
   FormatCurrencyNumeric({this.leadingDigits = 16, this.decimalPlaces = 8});
@@ -17,7 +18,7 @@ class FormatCurrencyNumeric extends TextInputFormatter {
     int period = -1;
     int postPeriod = 0;
     for (var char in newValue.text.characters) {
-      if (!char.isNumericOnly && char != '.') {
+      if (!char.onlyContainsDigits() && char != '.') {
         result = oldValue;
         break;
       }
