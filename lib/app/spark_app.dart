@@ -18,7 +18,7 @@ class SparkApp {
   }) {
     AppNavigator.initialize(home: home);
 
-    var materialApp = MaterialApp(
+    Widget tempChild = MaterialApp(
       navigatorKey: AppNavigator.rootNavKey,
       debugShowCheckedModeBanner: false,
       home: home,
@@ -26,20 +26,19 @@ class SparkApp {
       title: title ?? "Flutter App",
     );
 
-    Widget sysManagerChild;
     if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-      sysManagerChild =
-          WindowBorder(color: Colors.blueGrey, width: 1, child: materialApp);
-    } else {
-      sysManagerChild = materialApp;
+      tempChild =
+          WindowBorder(color: Colors.blueGrey, width: 1, child: tempChild);
     }
 
     var makeSystemManager = systemManager ??
         ({Key? key, required Widget child}) {
-          return AppSystemManager(key: key, child: sysManagerChild);
+          return AppSystemManager(key: key, child: child);
         };
 
-    return ShiftRightFixer(
-        child: makeSystemManager(child: sysManagerChild, key: sysManagerKey));
+    tempChild = makeSystemManager(child: tempChild, key: sysManagerKey);
+
+    // return ShiftRightFixer(child: tempChild);
+    return tempChild;
   }
 }
