@@ -1,7 +1,7 @@
-bool isNull(dynamic val) {
+bool isNull(Object? val) {
   return val == null;
 }
 
-bool isNotNull(dynamic val) {
+bool isNotNull(Object? val) {
   return val != null;
 }
