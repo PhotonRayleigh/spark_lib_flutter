@@ -22,6 +22,9 @@ dependencies:
   string_utility: ^0.1.2
   vy_string_utils: ^0.4.2
   flutter_multi_formatter: ^2.4.1
+  shared_preferences: ^2.0.6
+  # get_it: ^7.2.0
+  flutter_acrylic: ^0.0.2
 
 
 dev_dependencies:
