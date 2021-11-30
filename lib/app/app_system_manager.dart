@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+// Prefer using the app manager in the Program class per project.
 late final AppSystemManagerState baseAppManager;
 
 class AppSystemManager extends StatefulWidget {
