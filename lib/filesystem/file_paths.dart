@@ -7,14 +7,19 @@ import 'package:flutter/foundation.dart';
 final _SystemPaths systemPaths = _SystemPaths.platform();
 
 class _SystemPaths {
+  /// Usually C:\ on Windows.
+  /// / on everything else except iOS.
+  /// iOS is currently undefined.
   String get systemRoot {
     return _systemRoot ?? "";
   }
 
+  /// This is for app generated files
   String get applicationStorage {
     return _applicationStorage ?? "";
   }
 
+  /// Either Home on 'nix systems or users on Windows
   String get userDirectory {
     return _userDirectory ?? "";
   }
@@ -23,6 +28,9 @@ class _SystemPaths {
     return _tempDirectory ?? "";
   }
 
+  /// This is for user generated files
+  /// Double check that you save to a directory specific to this
+  /// app, not in the user's root documents.
   String get documentsDirectory {
     return _documentsDirectory ?? "";
   }
@@ -39,7 +47,7 @@ class _SystemPaths {
   String? _downloadsDirectory;
 
   Completer completer = Completer();
-  late Future ready;
+  late Future<void> ready;
 
   _SystemPaths() {
     ready = completer.future;
