@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'dart:async';
+import 'package:tinycolor2/tinycolor2.dart';
 
 class _SimpleTicker extends TickerProvider {
   @override
@@ -12,10 +13,22 @@ class _SimpleTicker extends TickerProvider {
 
 OverlayEntry? _activeSnackBar;
 
+// TODO: This really needs better theme controls
 Future<T?> showSnackBar<T>(BuildContext context, {String? message}) {
   var completer = Completer<T?>();
   Future<T?> future;
   var themeData = Theme.of(context);
+
+  var dismissButtonColor = themeData.colorScheme.primary;
+  var materialColor = MaterialStateColor.resolveWith((states) {
+    if (states.contains(MaterialState.hovered)) {
+      return TinyColor(dismissButtonColor).brighten(40).color;
+    } else {
+      return TinyColor(dismissButtonColor).brighten(20).color;
+    }
+    // return TinyColor(dismissButtonColor).darken().color;
+  });
+  var buttonStyle = ButtonStyle(foregroundColor: materialColor);
   var overlay = Overlay.of(context);
   void Function() entryProxy = () {};
 
@@ -64,8 +77,10 @@ Future<T?> showSnackBar<T>(BuildContext context, {String? message}) {
                             ),
                           ),
                           TextButton(
+                            style: buttonStyle,
                             child: Text(
                               "Dismiss",
+                              style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                             onPressed: () => entryProxy(),
                           )
