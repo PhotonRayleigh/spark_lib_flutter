@@ -4,9 +4,9 @@ import 'package:path/path.dart' as p;
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 
-final _SystemPaths systemPaths = _SystemPaths.platform();
+final SystemPaths systemPaths = SystemPaths.platform();
 
-class _SystemPaths {
+class SystemPaths {
   /// Usually C:\ on Windows.
   /// / on everything else except iOS.
   /// iOS is currently undefined.
@@ -49,14 +49,14 @@ class _SystemPaths {
   Completer completer = Completer();
   late Future<void> ready;
 
-  _SystemPaths() {
+  SystemPaths() {
     ready = completer.future;
     populatePaths();
   }
 
-  factory _SystemPaths.platform() {
+  factory SystemPaths.platform() {
     if (kIsWeb)
-      return _SystemPaths();
+      return SystemPaths();
     else if (Platform.isWindows)
       return WindowsPaths();
     else if (Platform.isMacOS)
@@ -68,7 +68,7 @@ class _SystemPaths {
     else if (Platform.isIOS)
       return IOSPaths();
     else
-      return _SystemPaths();
+      return SystemPaths();
   }
 
   Future<void> populatePaths() async {
@@ -206,7 +206,7 @@ class _SystemPaths {
   }
 }
 
-class WindowsPaths extends _SystemPaths {
+class WindowsPaths extends SystemPaths {
   String get programFiles {
     return _programFiles ?? "";
   }
@@ -258,7 +258,7 @@ class WindowsPaths extends _SystemPaths {
   }
 }
 
-class MacOSPaths extends _SystemPaths {
+class MacOSPaths extends SystemPaths {
   @override
   Future<void> populatePaths() async {
     var env = Platform.environment; // Fetch environment variables
@@ -288,7 +288,7 @@ class MacOSPaths extends _SystemPaths {
   }
 }
 
-class LinuxPaths extends _SystemPaths {
+class LinuxPaths extends SystemPaths {
   @override
   Future<void> populatePaths() async {
     var env = Platform.environment; // Fetch environment variables
@@ -318,7 +318,7 @@ class LinuxPaths extends _SystemPaths {
   }
 }
 
-class AndroidPaths extends _SystemPaths {
+class AndroidPaths extends SystemPaths {
   String get mount {
     return _mount ?? "";
   }
@@ -392,7 +392,7 @@ class AndroidPaths extends _SystemPaths {
   }
 }
 
-class IOSPaths extends _SystemPaths {
+class IOSPaths extends SystemPaths {
   @override
   Future<void> populatePaths() async {
     var env = Platform.environment; // Fetch environment variables

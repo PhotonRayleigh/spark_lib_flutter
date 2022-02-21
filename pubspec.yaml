@@ -27,6 +27,7 @@ dependencies:
   flutter_acrylic: ^1.0.0+1
   tinycolor2: ^2.0.0
   sqflite: ^2.0.2
+  flutter_simple_dependency_injection: ^2.0.0
 
 
 dev_dependencies:
