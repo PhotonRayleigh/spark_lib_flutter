@@ -1,5 +1,25 @@
 import 'package:flutter/widgets.dart';
 
+/*
+  The important thing with this paradigm is that you have
+  you manualy invoke UI rebuilds. There is no automatic
+  binding by default. Every change that you make that you
+  want reflected in the UI has to be manually invoked via notify().
+
+  It is more verbose, but offers tight control over how and when things update.
+  Furthermore, it decouples the component API from the data. 
+  The UI and Component can decide when it is relevant to notify subscribers of
+  changes. Data is read directly without wrappers.
+
+  This does violate immutability, but not strictly so. I can freely implement
+  patterns that make state immutable. One thing this does make harder though,
+  without explicit state objects, is an undo system. I'll have to think
+  about that one.
+
+  Either way, I think this is a good base to start from. It can be extended
+  later.
+ */
+
 /// A simple construct to notify subscribers of an event.
 /// Subscribers can register callbacks with [addListener]
 /// that get called when [notify] is invoked.
