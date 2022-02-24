@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
+import 'package:get_it/get_it.dart';
 import 'dart:io';
 
 import 'package:spark_lib/ioc/navigation/app_navigator.dart';
@@ -9,13 +10,15 @@ import 'package:spark_lib/ioc/navigation/app_navigator.dart';
 /// automatically adapt between desktop and mobile environments.
 class WindowAppBar {
   /// Default WindowAppBar.
-  /// Supports dragging the app bar to move the window
+  /// Supports dragging the app bar to move the window.
+  /// Depends on an AppNavigator being provided via constructor or GetIt.
   /// ToDo: Add parameters for window button colors and theme override
   static AppBar build(BuildContext context,
-      {required AppNavigator navigator,
+      {AppNavigator? navigator,
       Key? key,
       required String titleText,
       List<Widget> actions = const []}) {
+    AppNavigator nav = navigator ?? GetIt.I.get<AppNavigator>();
     Widget appBarTitle;
     List<Widget> appBarActions = [];
     WindowButtonColors windowButtonColors =
@@ -25,10 +28,10 @@ class WindowAppBar {
         (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
       appBarActions = [
         ...actions,
-        if (navigator.currentView != navigator.homeScreen)
+        if (nav.currentView != nav.homeScreen)
           IconButton(
             onPressed: () {
-              navigator.navigateBack();
+              nav.navigateBack();
             },
             icon: Icon(Icons.arrow_back),
           ),

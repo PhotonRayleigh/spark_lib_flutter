@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_simple_dependency_injection/injector.dart';
+import 'package:get_it/get_it.dart';
 
 import 'app/app_system_manager.dart';
 import 'app/spark_app.dart';
@@ -12,47 +12,35 @@ export 'custom_window/window_appbar.dart';
 export 'navigation/spark_page.dart';
 
 class SparkDIModule {
-  Injector initialize(Injector injector,
+  /// Registers SparkApp and AppSystemManager key to GetIt.
+  /// Dependencies defined in constructor.
+  void initialize(
       {required AppNavigator navigator,
       required Widget home,
       ThemeData? theme,
       String? title,
       AppSystemManagerFactory? systemManagerBuilder,
       GlobalKey<AppSystemManagerState>? sysManagerKey}) {
-    injector.map<AppSystemManagerFactory>((i) =>
-        systemManagerBuilder ??
-        ({Key? key, required Widget child}) {
-          return AppSystemManager(
-            key: key,
-            child: child,
-          );
-        });
-
-    // Widget home = homeFactory();
-
-    // injector.map<AppNavigator>((i) => AppNavigator(home: home),
-    //     isSingleton: true);
-
-    injector.map<SparkApp>(
-        (i) => SparkApp(
-            navigator: navigator,
-            home: home,
-            theme: theme,
-            title: title,
-            systemManagerBuilder: systemManagerBuilder ??
-                ({Key? key, required Widget child}) {
-                  return AppSystemManager(
-                    key: key,
-                    child: child,
-                  );
-                },
-            sysManagerKey: sysManagerKey),
-        isSingleton: true);
+    GetIt.I.registerSingleton<SparkApp>(
+      SparkApp(
+          navigator: navigator,
+          home: home,
+          theme: theme,
+          title: title,
+          systemManagerBuilder: systemManagerBuilder ??
+              ({Key? key, required Widget child}) {
+                return AppSystemManager(
+                  key: key,
+                  child: child,
+                );
+              },
+          sysManagerKey: sysManagerKey),
+    );
 
     if (sysManagerKey == null)
-      injector.map<GlobalKey<AppSystemManagerState>>(
-          (i) => i.get<SparkApp>().sysManagerKey);
+      GetIt.I.registerSingleton<GlobalKey<AppSystemManagerState>>(
+          GetIt.I.get<SparkApp>().sysManagerKey);
 
-    return injector;
+    return;
   }
 }
