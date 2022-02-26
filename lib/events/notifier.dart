@@ -55,6 +55,34 @@ class Notifier {
   }
 }
 
+class DataNotifier<T> {
+  final List<void Function(T data)> _callbacks = [];
+  void notify(T data) {
+    for (var func in _callbacks) {
+      func(data);
+    }
+  }
+
+  void addListener(void Function(T data) callback) {
+    if (_callbacks.contains(callback)) return;
+    _callbacks.add(callback);
+  }
+
+  void removeListener(void Function(T data) callback) {
+    _callbacks.remove(callback);
+  }
+
+  void clearListeners() {
+    _callbacks.clear();
+  }
+
+  void printListeners() {
+    for (var callback in _callbacks) {
+      print(callback);
+    }
+  }
+}
+
 class StreamNotifier<T> {
   T? cache;
   bool pause = true;
@@ -87,6 +115,99 @@ class StreamNotifier<T> {
     pause = true;
   }
 }
+
+// This won't actually work. Need to be able to capture the last state,
+// which I currently can't do. RIP, guess this is how it goes.
+// class WhenStreamBuilder<T> extends StreamBuilder<T> {
+//   WhenStreamBuilder(
+//       {required Stream<T> stream,
+//       required T initialData,
+//       required Widget Function(BuildContext context, AsyncSnapshot<T> snapshot)
+//           builder,
+//       this.buildWhen})
+//       : super(stream: stream, initialData: initialData, builder: builder);
+
+//   final bool Function(T data)? buildWhen;
+
+//   @override
+//   State<StreamBuilderBase<T, AsyncSnapshot<T>>> createState() {
+//     return StreamNotifierState<T, AsyncSnapshot<T>>();
+//   }
+// }
+
+// class StreamNotifierState<T, S> extends State<StreamBuilderBase<T, S>> {
+//   StreamSubscription<T>? _subscription; // ignore: cancel_subscriptions
+//   late S _summary;
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     _summary = widget.initial();
+//     if ((widget as WhenStreamBuilder<T>).buildWhen == null) {
+//       onData = (T data) {
+//         setState(() {
+//           _summary = widget.afterData(_summary, data);
+//         });
+//       };
+//     } else {
+//       bool Function(T) buildWhen = (widget as WhenStreamBuilder<T>).buildWhen!;
+//       onData = (T data) {
+//         if (buildWhen(data))
+//           setState(() {
+//             _summary = widget.afterData(_summary, data);
+//           });
+//       };
+//     }
+//     _subscribe();
+//   }
+
+//   @override
+//   void didUpdateWidget(StreamBuilderBase<T, S> oldWidget) {
+//     super.didUpdateWidget(oldWidget);
+//     if (oldWidget.stream != widget.stream) {
+//       if (_subscription != null) {
+//         _unsubscribe();
+//         _summary = widget.afterDisconnected(_summary);
+//       }
+//       _subscribe();
+//     }
+//   }
+
+//   @override
+//   Widget build(BuildContext context) => widget.build(context, _summary);
+
+//   @override
+//   void dispose() {
+//     _unsubscribe();
+//     super.dispose();
+//   }
+
+//   late void Function(T) onData;
+
+//   void _subscribe() {
+//     if (widget.stream != null) {
+//       _subscription = widget.stream!.listen((T data) {
+//         onData(data);
+//       }, onError: (Object error, StackTrace stackTrace) {
+//         setState(() {
+//           _summary = widget.afterError(_summary, error, stackTrace);
+//         });
+//       }, onDone: () {
+//         setState(() {
+//           _summary = widget.afterDone(_summary);
+//         });
+//       });
+//       _summary = widget.afterConnected(_summary);
+//     }
+//   }
+
+//   void _unsubscribe() {
+//     if (_subscription != null) {
+//       _subscription!.cancel();
+//       _subscription = null;
+//     }
+//   }
+// }
 
 /// Designed to work with [Notifier], [NotifierBuilder] will subscribe
 /// to a given [Notifier] and will rebuild whenever [Notifier.notify]
