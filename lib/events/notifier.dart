@@ -116,6 +116,106 @@ class StreamNotifier<T> {
   }
 }
 
+/// Designed to work with [Notifier], [NotifierBuilder] will subscribe
+/// to a given [Notifier] and will rebuild whenever [Notifier.notify]
+/// is called.
+///
+/// No mechanism for communicating state is provided. With this system,
+/// you are expected to provide the state object(s) to watch, the state
+/// of which will be captured at the time [Notifier.notify] is called.
+class NotifierBuilder extends StatefulWidget {
+  const NotifierBuilder(
+      {required this.builder,
+      required this.notifier,
+      this.callbackAction,
+      Key? key})
+      : super(key: key);
+  final Widget Function(BuildContext context) builder;
+  final Notifier notifier;
+  final void Function()? callbackAction;
+
+  @override
+  _NotifierBuilderState createState() => _NotifierBuilderState();
+}
+
+class _NotifierBuilderState extends State<NotifierBuilder> {
+  void callback() {
+    setState(() {
+      if (widget.callbackAction != null) widget.callbackAction;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    widget.notifier.addListener(callback);
+  }
+
+  @override
+  void dispose() {
+    widget.notifier.removeListener(callback);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.builder(context);
+  }
+}
+
+/// Plays the same role as [NotifierBuilder], but allows data to be passed
+/// in like a [Stream]. Like [NotifierBuilder], this operates synchronously.
+class DataNotifierBuilder<T> extends StatefulWidget {
+  const DataNotifierBuilder(
+      {required this.initialData,
+      required this.notifier,
+      required this.builder,
+      this.callbackAction,
+      Key? key})
+      : super(key: key);
+
+  final Widget Function(
+    BuildContext context,
+    T data,
+  ) builder;
+  final T initialData;
+  final DataNotifier<T> notifier;
+  final void Function(T data)? callbackAction;
+
+  @override
+  _DataNotifierBuilderState<T> createState() => _DataNotifierBuilderState<T>();
+}
+
+class _DataNotifierBuilderState<T> extends State<DataNotifierBuilder<T>> {
+  late T data;
+
+  void callback(T newData) {
+    data = newData;
+    setState(() {
+      if (widget.callbackAction != null) widget.callbackAction!(data);
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    widget.notifier.addListener(callback);
+  }
+
+  @override
+  void dispose() {
+    widget.notifier.removeListener(callback);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.builder(context, data);
+  }
+}
+
 // This won't actually work. Need to be able to capture the last state,
 // which I currently can't do. RIP, guess this is how it goes.
 // class WhenStreamBuilder<T> extends StreamBuilder<T> {
@@ -208,51 +308,3 @@ class StreamNotifier<T> {
 //     }
 //   }
 // }
-
-/// Designed to work with [Notifier], [NotifierBuilder] will subscribe
-/// to a given [Notifier] and will rebuild whenever [Notifier.notify]
-/// is called.
-///
-/// No mechanism for communicating state is provided. With this system,
-/// you are expected to provide the state object(s) to watch, the state
-/// of which will be captured at the time [Notifier.notify] is called.
-class NotifierBuilder extends StatefulWidget {
-  const NotifierBuilder(
-      {required this.builder,
-      required this.notifier,
-      this.callbackAction,
-      Key? key})
-      : super(key: key);
-  final Widget Function(BuildContext context) builder;
-  final Notifier notifier;
-  final void Function()? callbackAction;
-
-  @override
-  _NotifierBuilderState createState() => _NotifierBuilderState();
-}
-
-class _NotifierBuilderState extends State<NotifierBuilder> {
-  void callback() {
-    setState(() {
-      if (widget.callbackAction != null) widget.callbackAction;
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-
-    widget.notifier.addListener(callback);
-  }
-
-  @override
-  void dispose() {
-    widget.notifier.removeListener(callback);
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return widget.builder(context);
-  }
-}
