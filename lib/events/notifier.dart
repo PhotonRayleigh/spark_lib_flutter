@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'dart:async';
 
 /*
   The important thing with this paradigm is that you have
@@ -51,6 +52,39 @@ class Notifier {
     for (var callback in _callbacks) {
       print(callback);
     }
+  }
+}
+
+class StreamNotifier<T> {
+  T? cache;
+  bool pause = true;
+  late StreamController<T> _controller = StreamController.broadcast(
+    onListen: _onListen,
+    onCancel: _onCancel,
+  );
+  Stream<T> get stream => _controller.stream;
+  void close() {
+    _controller.close();
+  }
+
+  void notify(T data) {
+    if (!pause)
+      _controller.add(data);
+    else
+      cache = data;
+  }
+
+  void _onListen() {
+    pause = false;
+    if (cache != null) {
+      T localCache = cache!;
+      _controller.add(localCache);
+      cache = null;
+    }
+  }
+
+  void _onCancel() {
+    pause = true;
   }
 }
 
