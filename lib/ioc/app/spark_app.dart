@@ -5,6 +5,9 @@ import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:spark_lib/ioc/navigation/app_navigator.dart';
 import 'package:spark_lib/ioc/app/app_system_manager.dart';
 
+import '../custom_window/window_data.dart';
+import '../custom_window/bitsdojo_boilerplate.dart';
+
 /// Container class for root app widget in Spark apps.
 /// On creation, this class creates the root widget for the app
 /// and stores it in [SparkApp.treeRoot].
@@ -15,6 +18,7 @@ class SparkApp {
   String? title;
   AppSystemManagerFactory systemManagerBuilder;
   late GlobalKey<AppSystemManagerState> sysManagerKey;
+  WindowData? windowData;
 
   AppNavigator navigator;
 
@@ -28,6 +32,7 @@ class SparkApp {
     this.title,
     required this.systemManagerBuilder,
     GlobalKey<AppSystemManagerState>? sysManagerKey,
+    this.windowData,
   }) {
     navigator.initialize(home: home);
 
@@ -51,5 +56,10 @@ class SparkApp {
     this.sysManagerKey = sysManagerKey ?? GlobalKey<AppSystemManagerState>();
     tempChild = systemManagerBuilder(child: tempChild, key: sysManagerKey);
     treeRoot = tempChild;
+  }
+
+  void run() {
+    runApp(treeRoot);
+    initializeBitsdojo(windowData);
   }
 }

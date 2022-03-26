@@ -36,7 +36,8 @@ class AppNavigator {
 
   bool _initialized = false;
 
-  initialize({required Widget home, BackModel backModel = BackModel.toHome}) {
+  void initialize(
+      {required Widget home, BackModel backModel = BackModel.toHome}) {
     // Prevent double initialization on hot reload or by error.
     if (_initialized) return;
     // Setup home and screen stack
