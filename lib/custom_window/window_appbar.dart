@@ -3,32 +3,38 @@ import 'package:flutter/foundation.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'dart:io';
 
-import 'package:spark_lib/navigation/spark_nav.dart';
+import 'package:spark_lib/navigation/app_navigator.dart';
 
 /// Static class that contains methods to build app bars that
 /// automatically adapt between desktop and mobile environments.
 class WindowAppBar {
   /// Default WindowAppBar.
-  /// Supports dragging the app bar to move the window
+  /// Supports dragging the app bar to move the window.
+  /// Depends on an AppNavigator being provided via constructor or GetIt.
   /// ToDo: Add parameters for window button colors and theme override
   static AppBar build(BuildContext context,
-      {Key? key, required String titleText, List<Widget> actions = const []}) {
+      {AppNavigator? navigator,
+      Key? key,
+      required String titleText,
+      List<Widget> actions = const []}) {
+    AppNavigator nav = navigator ?? AppNavigator.I;
     Widget appBarTitle;
     List<Widget> appBarActions = [];
     WindowButtonColors windowButtonColors =
         WindowButtonColors(iconNormal: Colors.white, mouseOver: Colors.black38);
 
+    var backButton = IconButton(
+      onPressed: () {
+        nav.navigateBack();
+      },
+      icon: Icon(Icons.arrow_back),
+    );
+
     if (!kIsWeb &&
         (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
       appBarActions = [
         ...actions,
-        if (AppNavigator.currentView != AppNavigator.homeScreen)
-          IconButton(
-            onPressed: () {
-              AppNavigator.navigateBack();
-            },
-            icon: Icon(Icons.arrow_back),
-          ),
+        if (nav.currentView != nav.homeScreen) backButton,
         MinimizeWindowButton(
           colors: windowButtonColors,
         ),
@@ -65,7 +71,10 @@ class WindowAppBar {
         ),
       );
 
-      appBarActions = actions;
+      appBarActions = [
+        ...actions,
+        if (Platform.isIOS && nav.currentView != nav.homeScreen) backButton
+      ];
     }
 
     return AppBar(

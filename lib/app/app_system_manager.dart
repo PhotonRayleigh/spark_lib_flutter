@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-// Prefer using the app manager in the Program class per project.
-late final AppSystemManagerState baseAppManager;
+typedef AppSystemManagerFactory = AppSystemManager Function(
+    {Key? key, required Widget child});
 
 class AppSystemManager extends StatefulWidget {
   final Widget child;
@@ -17,12 +17,13 @@ class AppSystemManager extends StatefulWidget {
 class AppSystemManagerState extends State<AppSystemManager>
     with WidgetsBindingObserver {
   static bool _managerSet = false;
+  static AppSystemManagerState? I;
 
   AppSystemManagerState() {
     if (_managerSet)
       throw Exception(
           "Error: Apps can only have one AppSystemManager instanced");
-    baseAppManager = this;
+    I = this;
   }
 
   List<void Function()> _onScreenChanged = <void Function()>[];

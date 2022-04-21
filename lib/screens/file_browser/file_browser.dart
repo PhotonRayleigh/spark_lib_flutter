@@ -185,12 +185,13 @@ class FileBrowserState extends State<FileBrowser> {
     );
 
     return SparkPage(
+        navigator: AppNavigator.I,
         child: Scaffold(
-      key: fsKey,
-      appBar: appBar,
-      drawer: FbNavDrawer(fsCon),
-      body: body,
-    ));
+          key: fsKey,
+          appBar: appBar,
+          drawer: FbNavDrawer(fsCon),
+          body: body,
+        ));
   }
 
   IconButton buildForwardButton() {

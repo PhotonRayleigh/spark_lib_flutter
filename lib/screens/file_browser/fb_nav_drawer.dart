@@ -32,6 +32,8 @@ class FbNavDrawerState extends State<FbNavDrawer> {
 
   @override
   Widget build(BuildContext context) {
+    var navigator = AppNavigator.I;
+
     var drawerHeader = DrawerHeader(
       child: Column(
         children: [
@@ -40,7 +42,7 @@ class FbNavDrawerState extends State<FbNavDrawer> {
               IconButton(
                   icon: Icon(Icons.arrow_back),
                   onPressed: () {
-                    AppNavigator.navigateBack();
+                    navigator.navigateBack();
                   }),
               Text("Return to last screen"),
               Expanded(
@@ -129,6 +131,7 @@ class FbNavDrawerState extends State<FbNavDrawer> {
     }
 
     await controller.init;
+    var navigator = AppNavigator.I;
 
     var pathList = <String>[];
 
@@ -169,7 +172,7 @@ class FbNavDrawerState extends State<FbNavDrawer> {
               controller
                   .setLocation(s)
                   .whenComplete(() => controller.fileBrowserRefresh());
-              AppNavigator.safePop();
+              navigator.safePop();
             }),
     ];
     setState(() {});

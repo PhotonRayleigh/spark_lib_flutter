@@ -3,14 +3,18 @@ import 'package:spark_lib/navigation/app_navigator.dart';
 
 class SparkPage extends StatelessWidget {
   final Widget child;
-  final Future<bool> Function()? onWillPop;
+  late final Future<bool> Function() onWillPop;
   final Key? key;
+  final AppNavigator navigator;
 
   SparkPage(
       {this.key,
       required this.child,
-      this.onWillPop = AppNavigator.defaultOnWillPop})
-      : super(key: key);
+      required this.navigator,
+      Future<bool> Function()? onWillPop})
+      : super(key: key) {
+    this.onWillPop = onWillPop ?? navigator.defaultOnWillPop;
+  }
 
   @override
   Widget build(BuildContext context) {

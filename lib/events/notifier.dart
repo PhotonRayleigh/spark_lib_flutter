@@ -83,6 +83,8 @@ class DataNotifier<T> {
   }
 }
 
+/// Provides a [Stream] that can be used to push events to subscribers
+/// with the [notify] function.
 class StreamNotifier<T> {
   T? cache;
   bool pause = true;

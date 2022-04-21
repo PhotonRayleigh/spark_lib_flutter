@@ -1,12 +1,13 @@
 import 'dart:io';
+import 'package:flutter/widgets.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 
-final SystemPaths systemPaths = SystemPaths.platform();
-
 class SystemPaths {
+  static SystemPaths I = SystemPaths.platform();
+
   /// Usually C:\ on Windows.
   /// / on everything else except iOS.
   /// iOS is currently undefined.
@@ -51,6 +52,7 @@ class SystemPaths {
 
   SystemPaths() {
     ready = completer.future;
+    WidgetsFlutterBinding.ensureInitialized();
     populatePaths();
   }
 
@@ -408,10 +410,11 @@ class IOSPaths extends SystemPaths {
       _applicationStorage = result.path;
     }));
 
-    awaiterList.add(getDownloadsDirectory().then((Directory? result) {
-      _applicationStorage =
-          result?.path ?? p.join(_userDirectory! + "/Downloads");
-    }));
+    // Does not work on iOS.
+    // awaiterList.add(getDownloadsDirectory().then((Directory? result) {
+    //   _applicationStorage =
+    //       result?.path ?? p.join(_userDirectory! + "/Downloads");
+    // }));
 
     awaiterList.add(getTemporaryDirectory().then((Directory result) {
       _tempDirectory = result.path;

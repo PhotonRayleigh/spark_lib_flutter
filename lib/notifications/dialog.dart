@@ -15,6 +15,7 @@ Future<T?> showBaseDialog<T>(BuildContext context,
     var headingTextStyle = Theme.of(context).textTheme.headline6!.copyWith(
           decoration: TextDecoration.underline,
         );
+    var navigator = AppNavigator.I;
     return Dialog(
         insetPadding: EdgeInsets.zero,
         backgroundColor: Colors.transparent,
@@ -26,7 +27,7 @@ Future<T?> showBaseDialog<T>(BuildContext context,
               ConstrainedBox(
                   constraints: BoxConstraints.expand(),
                   child: GestureDetector(
-                    onTap: AppNavigator.safePop,
+                    onTap: navigator.safePop,
                   )),
               Center(
                   child: GestureDetector(
@@ -60,7 +61,7 @@ Future<T?> showBaseDialog<T>(BuildContext context,
                                     ),
                                   TextButton(
                                     child: Text("Ok"),
-                                    onPressed: AppNavigator.safePop,
+                                    onPressed: navigator.safePop,
                                   ),
                                 ],
                               )),

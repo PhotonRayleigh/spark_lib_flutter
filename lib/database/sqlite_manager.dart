@@ -24,7 +24,7 @@ class _SqliteManager {
   }
 
   Future<Database> openDB(String path) async {
-    Directory dir = Directory(systemPaths.applicationStorage);
+    Directory dir = Directory(SystemPaths.I.applicationStorage);
     print(dir);
     return await openDatabase(p.join(dir.path, 'currencyData.db'));
     // initCompleter.complete();

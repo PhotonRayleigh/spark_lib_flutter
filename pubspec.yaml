@@ -10,7 +10,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  # get:
   back_button_interceptor: ^5.0.2
   bitsdojo_window: ^0.1.1+1
   cupertino_icons: ^1.0.2
@@ -23,11 +22,13 @@ dependencies:
   vy_string_utils: ^0.4.2
   flutter_multi_formatter: ^2.4.1
   shared_preferences: ^2.0.6
-  get_it: ^7.2.0
+  # get_it: ^7.2.0
   flutter_acrylic: ^1.0.0+1
   tinycolor2: ^2.0.0
   sqflite: ^2.0.2
-  # flutter_simple_dependency_injection: ^2.0.0
+  file_selector: 0.8.4+1
+  open_file: 3.2.1
+  sembast: 3.2.0
 
 
 dev_dependencies:
