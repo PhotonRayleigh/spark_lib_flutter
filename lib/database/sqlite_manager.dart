@@ -1,6 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:spark_lib/filesystem/file_paths.dart';
+import 'package:spark_lib/filesystem/system_paths.dart';
 import 'dart:async';
 import 'dart:io';
 import 'package:path/path.dart' as p;

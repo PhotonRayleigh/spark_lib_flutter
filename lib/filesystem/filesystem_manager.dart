@@ -1,4 +1,4 @@
-import 'file_paths.dart';
+import 'system_paths.dart';
 import 'dart:io';
 import 'package:open_file/open_file.dart';
 import 'package:file_selector/file_selector.dart';
